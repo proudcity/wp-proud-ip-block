@@ -28,8 +28,38 @@ class Proud_GF_IP_Block extends Proud_IP_Block{
 	 * @author SFNdesign, Curtis McHale
 	 */
 	public function init(){
-        add_filter( 'gform_abort_submission_with_confirmation', array( $this, 'check_country' ) );
+
+        add_filter( 'gform_validation', array( $this, 'check_country_old' ), 999 );
+
+        // this filter only works with version 2.7 and above and we're not currently using the latest version
+        // @todo it will need to be tested when we upgrade to 2.7
+        //add_filter( 'gform_abort_submission_with_confirmation', array( $this, 'check_country' ) );
+
 	} // init
+
+    /**
+     * Checks the form to see if it's from an allowed country as determined by IP
+     *
+     * @since 2022.11.03
+     * @access public
+     *
+     * @param   array           $validation_result          required                Current result of validation checks in GF
+     * @uses    GFFormsModel::get_ip()                                              Returns the IP for the current form submission
+     * @uses    parent::check_ip_by_country()                                       Returns true if the IP is in the allowed country array
+     * @return  array           $validation_result                                  The modified validation result
+     */
+    public static function check_country_old( $validation_result ){
+
+        $ip = GFFormsModel::get_ip(); // define this IP
+
+        if ( parent::check_ip_by_country( $ip ) ){
+            // from the US so we're good
+            $validation_result['is_valid'] = false;
+        }
+
+        return $validation_result;
+
+    } // check_country_old
 
     /**
      * Checks the country code for the form submission and stops saving of forms outside the US
