@@ -25,8 +25,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-require_once( 'vendor/autoload.php' );
-use GeoIP2\WebService\Client;
+namespace Proud\IP_Block;
+
+require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+use GeoIp2\WebService\Client;
 
 class Proud_IP_Block{
 
@@ -73,9 +75,19 @@ class Proud_IP_Block{
 
 	} // init
 
+	/**
+	 * Sets the savable keys for our form class
+	 *
+	 * @since 2022.11.08
+	 * @access public
+	 *
+	 * @param 	array 		$options 			required 					Currently available keys
+	 * @return 	array 		$options										Modified array of saveable keys
+	 */
 	public static function wpp_ip_block_maxmind_options( $options ){
 
 		$options['maxmind_api_key'] = '';
+		$options['maxmind_account'] = '';
 
 		return $options;
 	}
@@ -105,6 +117,14 @@ class Proud_IP_Block{
 				)
 		);
 
+		$settings_array['maxmind_account'] = array(
+				'#type' => 'text',
+				'#title' => __pcHelp('MaxMind Account Number'),
+				'#description' => __pcHelp(
+					'This is use for IP blocking requests'
+				)
+		);
+
 		return $settings_array;
 
 	} // wpp_ipblock_maxmind_key
@@ -128,8 +148,9 @@ class Proud_IP_Block{
         if ( null != $ip ){
 
 			$maxmind_api_key = get_option( 'maxmind_api_key' );
+			$maxmind_account = get_option( 'maxmind_account' );
 
-            $client = new Client( '10', $maxmind_api_key, ['en'], ['host' => 'geolite.info'] );
+            $client = new Client( $maxmind_account, $maxmind_api_key, ['en'], ['host' => 'geolite.info'] );
             $record = $client->country( $ip );
 
             if ( in_array( $record->country->isoCode, $allowed_country ) ){
@@ -169,7 +190,7 @@ class Proud_IP_Block{
 	 */
 	public function constants(){
 
-		define( 'PROUD_ID_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+		define( 'PROUD_IP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
 	}
 
@@ -182,7 +203,8 @@ class Proud_IP_Block{
 	 */
 	public function includes(){
 
-        require_once( PROUD_ID_PLUGIN_DIR . 'modules/gravity-forms.php' );
+        require_once( PROUD_IP_PLUGIN_DIR . 'modules/gravity-forms.php' );
+		require_once( PROUD_IP_PLUGIN_DIR . 'vendor/autoload.php' );
 
 	}
 

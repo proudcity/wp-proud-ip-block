@@ -1,6 +1,6 @@
 <?php
 
-class Proud_GF_IP_Block extends Proud_IP_Block{
+class Proud_GF_IP_Block extends Proud\IP_Block\Proud_IP_Block{
 
 	private static $instance;
 
@@ -53,7 +53,10 @@ class Proud_GF_IP_Block extends Proud_IP_Block{
         $ip = GFFormsModel::get_ip(); // define this IP
 
         if ( parent::check_ip_by_country( $ip ) ){
-            // from the US so we're good
+            // from valid country
+            $validation_result['is_valid'] = true;
+        } else {
+            // not from valid country
             $validation_result['is_valid'] = false;
         }
 
