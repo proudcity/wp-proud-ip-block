@@ -3,7 +3,7 @@
 Plugin Name: ProudCity IP Block
 Plugin URI: http://proudcity.com
 Description: Provides IP blocking for sites
-Version: 1.0
+Version: 2022.11.08.1334
 Author: ProudCity, Curtis McHale
 Author URI: http://proudcity.com
 License: GPLv2 or later
